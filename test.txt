@@ -1,0 +1,16 @@
+
+Previously, autofocus range was controlled through saved camera preferences and separate camera controls. Apps could not set it directly through OsirisCameraConfig.
+
+This change adds:
+- Configurable Near, Far, and unrestricted autofocus ranges.
+- Continuous focus targeting at the scanning rectangle’s center or an app-provided point.
+- Restoration of the configured focus target and range after tap-to-focus.
+- A fix that prevents older cached settings from overwriting the latest saved selection when the scanner restarts.
+
+Existing SDK defaults remain unchanged. Documentation and configuration/focus-policy tests are included.
+
+Validation:
+Tested using the Diamond sample app on an iPhone 16 Pro running iOS 27, including checking that the selected autofocus range remains saved after returning to the scanner.
+
+Demo video:
+[Attach video here]
