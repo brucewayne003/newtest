@@ -1,16 +1,69 @@
+Parth Anand FY27 Self Evaluation
 
-Previously, autofocus range was controlled through saved camera preferences and separate camera controls. Apps could not set it directly through OsirisCameraConfig.
+During FY27, I contributed primarily to Compass before moving to the Scanner/Intelligence team in October. My Compass work supported indoor maps and product-location experiences used by Glass, MyWalmart and Spark Shopper, along with validation for other partner applications. I combined SDK development with integration support, in-store testing, reliability improvements and operational tooling. After the team transition, I applied that experience to Osiris by resolving integration blockers and giving consuming applications more control over scanner presentation and camera behavior. I also led a four-person hackathon team and represented Compass at a separate Innovation Day event.
 
-This change adds:
-- Configurable Near, Far, and unrestricted autofocus ranges.
-- Continuous focus targeting at the scanning rectangle’s center or an app-provided point.
-- Restoration of the configured focus target and range after tap-to-focus.
-- A fix that prevents older cached settings from overwriting the latest saved selection when the scanner restarts.
+Goal 1 Deliver Compass MGPS iOS platform capabilities and integrations
 
-Existing SDK defaults remain unchanged. Documentation and configuration/focus-policy tests are included.
+I contributed to keeping the Compass iOS SDK usable within its consuming applications as dependencies and integration requirements changed. I upgraded the Oriient positioning dependency to version 9.5.0, verified the native integration, and supported publication and consumption through the Glass integration workflow. I also worked on secure Compass authentication in Glass, including ClientSec storage and the configuration needed for stage and production environments and guest and signed-in users.
 
-Validation:
-Tested using the Diamond sample app on an iPhone 16 Pro running iOS 27, including checking that the selected autofocus range remains saved after returning to the scanner.
+The integration challenge was making the SDK behave correctly within the host application's authentication and configuration lifecycle. A working SDK build alone did not establish that the same flow would work across environments and user states. I addressed this through the secure-storage integration, environment-specific credential wiring and validation in Glass. Later, I completed compatibility work between the Compass React Native SDK and the updated native iOS SDK. These contributions helped partner applications consume Compass updates while preserving the map and positioning capabilities they depended on.
 
-Demo video:
-[Attach video here]
+Goal 2 Support Compass adoption through cross team collaboration
+
+I supported Compass rollout and integration validation across Glass, MyWalmart, SS/GIF and SAMS. This included validation for the 222-store blue-dot enablement batch in stage and production, recurring store-enablement checks, and in-store Glass testing. I checked map loading, the blue dot that represents the user's location, geofence behavior, foreground/background transitions, re-entry and store switching. I also contributed iOS validation for multi-tenancy changes and worked with the SAMS team on blue-dot behavior, legacy-map compatibility, converter flows and pilot stores.
+
+These integrations required testing beyond an isolated SDK sample because behavior depended on the host app, store configuration and physical location. I used store visits, partner debugging sessions and scenario-based checks to identify where expected behavior broke down and communicate findings to the teams involved. My contribution was to make integration and rollout decisions better informed by actual application behavior, including identifying unsuccessful cases that needed follow-up.
+
+Goal 3 Improve Compass iOS SDK reliability and code quality
+
+I worked on asynchronous-code modernization and status-service refactoring, and addressed native unit-test crashes following architecture changes. I also validated navigation, blue-dot behavior, static path previews and Action Alley scenarios with feature flags enabled and disabled. This work supported maintainability while checking that changes to the SDK's internal structure preserved its visible behavior.
+
+A recurring reliability challenge was the map lifecycle when a host application reopened a map or reused a store and session. Repeated initialization could invalidate an existing map or interfere with blue-dot recovery. I investigated these paths and worked on the same-session and same-store reinitialization issue, alongside problems with locating-state visibility. The focus was on keeping the SDK's state consistent across repeated interactions, because a successful first map load did not cover the full customer journey.
+
+I also worked on analytics upload reliability, validated account and session identifiers, and investigated duplicate events. This required distinguishing events generated or queued by the SDK from records repeated further along the ingestion path. I examined event and ingestion details to narrow the investigation rather than assuming every duplicate originated in iOS. The work supported more dependable telemetry and clearer diagnosis of issues spanning the SDK and downstream systems.
+
+Goal 4 Improve Compass iOS performance and accessibility
+
+I evaluated battery behavior across the SDK and its consuming applications, including Glass with and without Compass, Oriient 9.5, MyWalmart, optimized versus standard store maps, and Compass/RFID scenarios. I also investigated slow location acquisition in Glass and participated in guardrail testing. The central challenge was separating the SDK's contribution from the behavior of the full application and the conditions of an in-store session. Scenario-based comparisons gave the team a basis for evaluating performance and investigating regressions.
+
+I implemented Compass accessibility improvements for map controls and status feedback, including locating announcements and loading and error states, and validated the changes in the sample application and Glass. This work extended beyond the appearance of a control: users also need to understand when positioning is in progress and when a map is unavailable. Improving that feedback made Compass interactions more understandable for people using accessibility features and helped consuming applications provide a more accessible map experience.
+
+Goal 5 Strengthen Compass operational excellence and engineering practices
+
+I improved store-enablement automation by adding building-name validation and checks for the user-location-rendered event, then worked on integrating the automation into the main branch and fixing related tests. These checks helped distinguish loading a map from loading the intended store and actually rendering the user's location. They provided reusable validation for recurring enablement work.
+
+I also worked on diagnostic-log reliability, covering batching, uploading and deletion, asynchronous Core Data access, and retention limits. The engineering challenge was that overlapping log operations or an unreadable stored record could interfere with diagnostics, while unrestricted retention could continue consuming local storage. I addressed these concerns through the logging work and added age/count limits and corrupted-record recovery so valid records could continue through the upload process. This made the diagnostic path more maintainable and bounded its local storage use.
+
+Alongside implementation, I reviewed the consolidated Compass iOS React Native branch, performed post-release validation and investigated SAMS production map-loading failures. These activities helped connect development work with the integration and support issues that partner teams encountered in practice.
+
+Goal 6 Enhance Osiris iOS platform capabilities
+
+After moving to Scanner/Intelligence, I began contributing to Osiris integration and extensibility. I resolved a Core ML model-name collision that interfered with importing the OsirisKit framework in Glass. I changed the model naming and related references to remove the ambiguity. This addressed a build blocker at the framework boundary and allowed integration work to move forward.
+
+I added support for host applications to draw barcode bounding boxes while suppressing the SDK's own overlay. The challenge was keeping barcode geometry meaningful across the camera image, crop and displayed preview, while preserving detection and tap-to-focus behavior. My implementation addressed coordinate handling and stale overlays and retained the existing presentation behavior for applications that did not opt into the new mode. This gave partners more control over the scanner experience without requiring them to take over barcode detection itself.
+
+I also made Osiris resources optional by separating bundled presentation resources from the core integration path and supporting host-provided resources and fallbacks. This work covered resources such as icons, colors, fonts and scan audio. The challenge was allowing hosts to supply their own presentation choices while maintaining usable defaults and avoiding a mandatory dependency on the bundled resources. The change supported more flexible integration choices and use of barcode decoding without launching the scanner UI.
+
+For camera behavior, I investigated iPhone Pro focus and macro crossover and implemented configurable autofocus range and a continuous focus point. The implementation exposed these controls while preserving existing defaults and accounting for interactions with live camera configuration and focus behavior. The change is integrated into the SDK codebase. It gives consuming applications more control when tuning scanning for their use cases; validating behavior across relevant devices remains an important part of that work. Across my Osiris changes, I added regression tests for geometry, stale overlays, resource fallbacks and focus configuration, and documented the host-integration options.
+
+Goal 7 Build technical expertise share knowledge and transition into Scanner Intelligence
+
+Hackathon leadership
+
+During the Compass hackathon, I led a team of four and built a prototype connecting the Sparky AI assistant in Glass with Compass navigation. When a customer selected an item shown in the Sparky conversation, the prototype used Compass to guide the customer to the product's location. I also implemented computer vision and augmented reality capabilities: at the aisle, a camera experience highlighted the target products with bounding boxes and displayed relevant product information.
+
+The technical challenge was connecting a product recommendation in a conversation to navigation through a store and then to recognition of the physical item. I brought those stages together into a prototype that demonstrated a potential end-to-end shopping experience. Leading the team gave me experience coordinating a shared implementation, while the hands-on work broadened my use of computer vision and augmented reality beyond the core map experience.
+
+Innovation Day product presentations
+
+Separately from the hackathon, I represented Compass at Innovation Day with my teammate. We prepared the booth and presentation material during a setup and dry-run day, then spent two full days, from 8 a.m. to 5 p.m., presenting Compass and answering delegates' questions. I explained the product's capabilities and its integrations with Glass, Spark Shopper and MyWalmart to visitors from across Walmart, including senior leaders.
+
+The challenge was making the product understandable to people with different levels of technical and business familiarity. I explained how Compass supported real application experiences and discussed visitors' questions and potential use cases. I also explained the augmented-reality indoor-navigation proof of concept I had worked on and answered questions about how it could be used. Several conversations included interest from teams in using Compass in the future. This work increased awareness of the product and gave me sustained experience representing our team's work directly to a broad audience.
+
+Learning and team transition
+
+I completed onboarding to the Compass React Native SDK and later to Scanner/Intelligence, including reviewing the architecture and development workflow and building and running the Osiris sample application. Moving between teams required learning a new domain while continuing to apply my experience with SDK consumers and integration boundaries. My subsequent Osiris contributions show how I translated that onboarding into implementation work.
+
+Development priorities
+
+My next focus is to deepen my understanding of scanner efficiency and camera behavior, including learning from Vlad's work and gradually taking on suitable tasks in that area. I also want to capture baseline measurements, validation outcomes and follow-up decisions more consistently as work is completed. This will make future performance and reliability improvements easier to evaluate and give both the team and consuming applications clearer evidence of the results.
